@@ -34,12 +34,12 @@ export function Room({ roomId, name, onLeave }: Props) {
 
   const myVote = state?.players[playerId]?.vote ?? null;
   const revealed = state?.revealed ?? false;
-  const votedCount = players.filter((p) => p.vote !== null).length;
+  const votedCount = players.filter((p) => p.vote != null).length;
   const allVoted = players.length > 0 && votedCount === players.length;
 
   const votes = players
     .map((p) => p.vote)
-    .filter((v): v is string => v !== null);
+    .filter((v): v is string => v != null);
   const stats = revealed ? computeStats(votes) : null;
 
   const copyLink = async () => {
@@ -81,7 +81,7 @@ export function Room({ roomId, name, onLeave }: Props) {
 
         <div className="players-grid">
           {players.map((p) => {
-            const hasVote = p.vote !== null;
+            const hasVote = p.vote != null;
             const flipped = revealed && hasVote;
             return (
               <div
