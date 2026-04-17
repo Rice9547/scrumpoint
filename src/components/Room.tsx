@@ -91,7 +91,7 @@ export function Room({ roomId, name, onLeave }: Props) {
                 <div className={`pcard ${flipped ? 'revealed' : ''}`}>
                   <div className="pcard-inner">
                     <div className={`pcard-back ${hasVote ? '' : 'waiting'}`}>
-                      {hasVote ? '' : '…'}
+                      {hasVote ? '?' : '…'}
                     </div>
                     <div className="pcard-front">{p.vote ?? ''}</div>
                   </div>
