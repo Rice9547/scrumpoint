@@ -12,8 +12,10 @@ function computeStats(votes: string[]) {
   const numeric = votes
     .map((v) => Number(v))
     .filter((n) => Number.isFinite(n));
-  if (!numeric.length) return null;
-  const avg = numeric.reduce((a, b) => a + b, 0) / numeric.length;
+  const avg =
+    numeric.length > 0
+      ? numeric.reduce((a, b) => a + b, 0) / numeric.length
+      : null;
   const counts = new Map<string, number>();
   for (const v of votes) counts.set(v, (counts.get(v) ?? 0) + 1);
   const top = [...counts.entries()].sort((a, b) => b[1] - a[1]);
@@ -32,7 +34,8 @@ export function Room({ roomId, name, onLeave }: Props) {
 
   const myVote = state?.players[playerId]?.vote ?? null;
   const revealed = state?.revealed ?? false;
-  const allVoted = players.length > 0 && players.every((p) => p.vote !== null);
+  const votedCount = players.filter((p) => p.vote !== null).length;
+  const allVoted = players.length > 0 && votedCount === players.length;
 
   const votes = players
     .map((p) => p.vote)
@@ -48,36 +51,87 @@ export function Room({ roomId, name, onLeave }: Props) {
   };
 
   return (
-    <div className="room">
+    <div className="page">
       <header className="room-header">
         <div>
-          <h2>房號 · <span className="mono">{roomId}</span></h2>
-          <button className="link" onClick={copyLink}>複製邀請連結</button>
+          <div className="room-label">Room</div>
+          <div className="room-id-row">
+            <span className="room-id">{roomId}</span>
+            <button
+              type="button"
+              className="btn btn-ghost"
+              onClick={copyLink}
+              title="複製邀請連結"
+            >
+              複製連結
+            </button>
+          </div>
         </div>
-        <button className="secondary" onClick={onLeave}>離開</button>
+        <button type="button" className="btn btn-danger-outline" onClick={onLeave}>
+          離開
+        </button>
       </header>
 
-      <section className="players">
-        <h3>參與者 ({players.length})</h3>
-        <ul>
-          {players.map((p) => (
-            <li key={p.id} className={p.id === playerId ? 'me' : ''}>
-              <span className="name">{p.name}{p.id === playerId && ' (你)'}</span>
-              <span className={`vote ${p.vote ? 'voted' : 'waiting'}`}>
-                {revealed ? (p.vote ?? '—') : p.vote ? '✓' : '…'}
-              </span>
-            </li>
-          ))}
-        </ul>
+      <section className="table">
+        <h2 className="table-title grad-title">
+          {revealed
+            ? '翻牌結果'
+            : `${votedCount} / ${players.length} 已投票`}
+        </h2>
+
+        <div className="players-grid">
+          {players.map((p) => {
+            const hasVote = p.vote !== null;
+            const flipped = revealed && hasVote;
+            return (
+              <div
+                key={p.id}
+                className={`player ${p.id === playerId ? 'me' : ''}`}
+              >
+                <div className={`pcard ${flipped ? 'revealed' : ''}`}>
+                  <div className="pcard-inner">
+                    <div className={`pcard-back ${hasVote ? '' : 'waiting'}`}>
+                      {hasVote ? '' : '…'}
+                    </div>
+                    <div className="pcard-front">{p.vote ?? ''}</div>
+                  </div>
+                </div>
+                <div className="player-name">{p.name}</div>
+              </div>
+            );
+          })}
+        </div>
+
+        {stats && (
+          <div className="stats">
+            {stats.avg !== null && (
+              <div className="stat-item">
+                <div className="stat-label">平均</div>
+                <div className="stat-value">{stats.avg.toFixed(1)}</div>
+              </div>
+            )}
+            <div className="stat-item">
+              <div className="stat-label">分布</div>
+              <div className="stat-tags">
+                {stats.top.map(([v, n]) => (
+                  <span key={v} className="tag">
+                    {v} × {n}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
       </section>
 
       <section className="deck">
-        <h3>選張卡</h3>
-        <div className="cards">
+        <div className="deck-title">選張卡</div>
+        <div className="deck-grid">
           {CARD_DECK.map((c) => (
             <button
               key={c}
-              className={`card-btn ${myVote === c ? 'selected' : ''}`}
+              type="button"
+              className={`deck-card ${myVote === c ? 'selected' : ''}`}
               onClick={() => vote(c)}
               disabled={revealed}
             >
@@ -85,29 +139,23 @@ export function Room({ roomId, name, onLeave }: Props) {
             </button>
           ))}
         </div>
+        <div className="deck-controls">
+          {!revealed ? (
+            <button
+              type="button"
+              className="btn"
+              onClick={reveal}
+              disabled={!allVoted}
+            >
+              {allVoted ? '翻牌' : '等所有人投票'}
+            </button>
+          ) : (
+            <button type="button" className="btn btn-outline" onClick={reset}>
+              開新一輪
+            </button>
+          )}
+        </div>
       </section>
-
-      <section className="controls">
-        {!revealed ? (
-          <button onClick={reveal} disabled={!allVoted}>
-            {allVoted ? '翻牌' : '等所有人投票'}
-          </button>
-        ) : (
-          <button onClick={reset}>開新一輪</button>
-        )}
-      </section>
-
-      {stats && (
-        <section className="stats">
-          <div>平均：<strong>{stats.avg.toFixed(1)}</strong></div>
-          <div>
-            分布：
-            {stats.top.map(([v, n]) => (
-              <span key={v} className="tag">{v} × {n}</span>
-            ))}
-          </div>
-        </section>
-      )}
     </div>
   );
 }
