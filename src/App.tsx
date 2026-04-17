@@ -17,6 +17,7 @@ export default function App() {
   if (!roomId || !name.trim()) {
     return (
       <Lobby
+        initialRoom={roomId}
         onJoin={(id, n) => {
           setName(n);
           goToRoom(id);

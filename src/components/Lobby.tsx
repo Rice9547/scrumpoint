@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 
 type Props = {
+  initialRoom?: string | null;
   onJoin: (roomId: string, name: string) => void;
 };
 
@@ -9,10 +10,10 @@ function randomRoomId() {
   return Math.random().toString(36).slice(2, 8);
 }
 
-export function Lobby({ onJoin }: Props) {
+export function Lobby({ initialRoom, onJoin }: Props) {
   const [name, setName] = useLocalStorage('scrumpoint:name');
   const [lastRoom] = useLocalStorage('scrumpoint:lastRoom');
-  const [roomId, setRoomId] = useState(lastRoom);
+  const [roomId, setRoomId] = useState(initialRoom || lastRoom);
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
