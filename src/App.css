@@ -1,7 +1,10 @@
 :root {
+  color-scheme: dark;
   --bg: #0f1115;
   --panel: #171b22;
   --panel-2: #1f242d;
+  --panel-hover: #2a3140;
+  --border: #2a3140;
   --text: #e7eaf0;
   --muted: #8b94a3;
   --accent: #6aa9ff;
@@ -9,6 +12,23 @@
   --danger: #e06a6a;
   --ok: #5ed17f;
   --radius: 10px;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color-scheme: light;
+    --bg: #f7f8fa;
+    --panel: #ffffff;
+    --panel-2: #eef0f4;
+    --panel-hover: #dfe3ea;
+    --border: #d9dde3;
+    --text: #1a1d24;
+    --muted: #6b7280;
+    --accent: #3d7fe0;
+    --accent-strong: #2d6ad0;
+    --danger: #d04545;
+    --ok: #2ea85a;
+  }
 }
 
 * {
@@ -66,7 +86,7 @@ button.secondary {
 }
 
 button.secondary:hover:not(:disabled) {
-  background: #2a3140;
+  background: var(--panel-hover);
 }
 
 button.link {
@@ -85,7 +105,7 @@ input {
   font: inherit;
   padding: 10px 12px;
   border-radius: var(--radius);
-  border: 1px solid #2a3140;
+  border: 1px solid var(--border);
   background: var(--panel-2);
   color: var(--text);
   width: 100%;
@@ -229,7 +249,7 @@ input:focus {
 .card-btn {
   background: var(--panel);
   color: var(--text);
-  border: 1px solid #2a3140;
+  border: 1px solid var(--border);
   padding: 18px 0;
   font-size: 20px;
   font-weight: 500;
