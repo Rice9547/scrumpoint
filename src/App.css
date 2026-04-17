@@ -1,4 +1,5 @@
-:root {
+:root,
+:root[data-theme='dark'] {
   color-scheme: dark;
   --bg: #0f1115;
   --panel: #171b22;
@@ -14,21 +15,19 @@
   --radius: 10px;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color-scheme: light;
-    --bg: #f7f8fa;
-    --panel: #ffffff;
-    --panel-2: #eef0f4;
-    --panel-hover: #dfe3ea;
-    --border: #d9dde3;
-    --text: #1a1d24;
-    --muted: #6b7280;
-    --accent: #3d7fe0;
-    --accent-strong: #2d6ad0;
-    --danger: #d04545;
-    --ok: #2ea85a;
-  }
+:root[data-theme='light'] {
+  color-scheme: light;
+  --bg: #f7f8fa;
+  --panel: #ffffff;
+  --panel-2: #eef0f4;
+  --panel-hover: #dfe3ea;
+  --border: #d9dde3;
+  --text: #1a1d24;
+  --muted: #6b7280;
+  --accent: #3d7fe0;
+  --accent-strong: #2d6ad0;
+  --danger: #d04545;
+  --ok: #2ea85a;
 }
 
 * {
@@ -292,4 +291,22 @@ input:focus {
   border-radius: 6px;
   margin-left: 6px;
   font-size: 13px;
+}
+
+.theme-toggle {
+  position: fixed;
+  top: 14px;
+  right: 14px;
+  z-index: 10;
+  background: var(--panel);
+  color: var(--muted);
+  border: 1px solid var(--border);
+  padding: 6px 12px;
+  font-size: 12px;
+  border-radius: 999px;
+}
+
+.theme-toggle:hover:not(:disabled) {
+  background: var(--panel-hover);
+  color: var(--text);
 }

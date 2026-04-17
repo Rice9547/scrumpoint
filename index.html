@@ -5,6 +5,19 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>scrumpoint</title>
+    <script>
+      // Resolve theme before paint so the first render matches the saved
+      // preference (avoids a flash of the wrong background).
+      (function () {
+        try {
+          var p = localStorage.getItem('scrumpoint:theme') || 'auto';
+          var resolved = p === 'auto'
+            ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+            : p;
+          document.documentElement.dataset.theme = resolved;
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
