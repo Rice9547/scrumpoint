@@ -9,4 +9,4 @@ export type RoomState = {
   players: Record<string, Player>;
 };
 
-export const CARD_DECK = ['0', '1', '2', '3', '5', '8', '13', '21', '?', '☕'];
+export const CARD_DECK = ['0', '0.5', '1', '2', '3', '5', '8', '13', '21', '?', '☕'];
