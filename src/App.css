@@ -340,6 +340,27 @@ input:focus {
   font-weight: 400;
 }
 
+.player-name-edit {
+  width: 100%;
+  background: transparent;
+  border: 1px dashed transparent;
+  border-radius: 6px;
+  padding: 2px 4px;
+  font: inherit;
+  color: inherit;
+  text-align: center;
+  outline: none;
+}
+
+.player-name-edit:hover {
+  border-color: var(--border);
+}
+
+.player-name-edit:focus {
+  border-color: var(--accent, var(--text-muted));
+  border-style: solid;
+}
+
 /* 3D flip card */
 
 .pcard {

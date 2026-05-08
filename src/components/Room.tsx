@@ -1,10 +1,11 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useRoom } from '../hooks/useRoom';
 import { CARD_DECK } from '../types';
 
 type Props = {
   roomId: string;
   name: string;
+  setName: (value: string) => void;
   onLeave: () => void;
 };
 
@@ -22,8 +23,20 @@ function computeStats(votes: string[]) {
   return { avg, top };
 }
 
-export function Room({ roomId, name, onLeave }: Props) {
-  const { state, playerId, vote, reveal, reset } = useRoom(roomId, name);
+export function Room({ roomId, name, setName, onLeave }: Props) {
+  const { state, playerId, vote, rename, reveal, reset } = useRoom(roomId, name);
+  const [nameDraft, setNameDraft] = useState(name);
+
+  const commitName = () => {
+    const trimmed = nameDraft.trim();
+    if (!trimmed) {
+      setNameDraft(name);
+      return;
+    }
+    if (trimmed === name) return;
+    setName(trimmed);
+    rename(trimmed);
+  };
 
   const players = useMemo(() => {
     if (!state) return [];
@@ -95,7 +108,26 @@ export function Room({ roomId, name, onLeave }: Props) {
                     <div className="pcard-front">{p.vote ?? ''}</div>
                   </div>
                 </div>
-                <div className="player-name">{p.name}</div>
+                {p.id === playerId ? (
+                  <input
+                    className="player-name player-name-edit"
+                    value={nameDraft}
+                    onChange={(e) => setNameDraft(e.target.value)}
+                    onBlur={commitName}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.currentTarget.blur();
+                      } else if (e.key === 'Escape') {
+                        setNameDraft(name);
+                        e.currentTarget.blur();
+                      }
+                    }}
+                    maxLength={30}
+                    aria-label="你的名字"
+                  />
+                ) : (
+                  <div className="player-name">{p.name}</div>
+                )}
               </div>
             );
           })}

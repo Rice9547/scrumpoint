@@ -24,7 +24,7 @@ export default function App() {
       }}
     />
   ) : (
-    <Room roomId={roomId} name={name} onLeave={goToLobby} />
+    <Room roomId={roomId} name={name} setName={setName} onLeave={goToLobby} />
   );
 
   return (

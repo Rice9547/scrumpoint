@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   onDisconnect,
   onValue,
@@ -23,13 +23,14 @@ function getOrCreatePlayerId(): string {
 export function useRoom(roomId: string, name: string) {
   const [state, setState] = useState<RoomState | null>(null);
   const [playerId] = useState(getOrCreatePlayerId);
+  const initialNameRef = useRef(name);
 
   useEffect(() => {
     const roomRef = ref(db, `rooms/${roomId}`);
     const playerRef = ref(db, `rooms/${roomId}/players/${playerId}`);
 
     const player: Player = {
-      name,
+      name: initialNameRef.current,
       vote: null,
       joinedAt: Date.now(),
     };
@@ -48,10 +49,14 @@ export function useRoom(roomId: string, name: string) {
       unsub();
       remove(playerRef);
     };
-  }, [roomId, name, playerId]);
+  }, [roomId, playerId]);
 
   const vote = (value: string) => {
     update(ref(db, `rooms/${roomId}/players/${playerId}`), { vote: value });
+  };
+
+  const rename = (value: string) => {
+    update(ref(db, `rooms/${roomId}/players/${playerId}`), { name: value });
   };
 
   const reveal = () => {
@@ -67,5 +72,5 @@ export function useRoom(roomId: string, name: string) {
     update(ref(db, `rooms/${roomId}`), updates);
   };
 
-  return { state, playerId, vote, reveal, reset };
+  return { state, playerId, vote, rename, reveal, reset };
 }
