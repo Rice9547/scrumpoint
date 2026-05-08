@@ -35,7 +35,6 @@ export function Room({ roomId, name, onLeave }: Props) {
   const myVote = state?.players[playerId]?.vote ?? null;
   const revealed = state?.revealed ?? false;
   const votedCount = players.filter((p) => p.vote != null).length;
-  const allVoted = players.length > 0 && votedCount === players.length;
 
   const votes = players
     .map((p) => p.vote)
@@ -145,9 +144,9 @@ export function Room({ roomId, name, onLeave }: Props) {
               type="button"
               className="btn"
               onClick={reveal}
-              disabled={!allVoted}
+              disabled={votedCount === 0}
             >
-              {allVoted ? '翻牌' : '等所有人投票'}
+              翻牌
             </button>
           ) : (
             <button type="button" className="btn btn-outline" onClick={reset}>
